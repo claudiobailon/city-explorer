@@ -18,6 +18,16 @@ app.get('/location', (request, response) => {
   response.send(obj);
 });
 
+app.get('/weather', (request, response) => {
+  let forcast = require('./data/weather.json');
+  let forcastArray = [];
+
+  forcast.data.forEach(day => {
+    forcastArray.push(new Weather(day));
+  })
+  response.send(forcastArray);
+})
+
 function Location(location, geoData){
   this.search_query = location;
   this.formatted_query = geoData[0].display_name;
@@ -25,6 +35,10 @@ function Location(location, geoData){
   this.longitude = geoData[0].lon;
 }
 
+function Weather(obj){
+  this.forecast = obj.weather.description;
+  this.time = obj.datetime;
+}
 
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
