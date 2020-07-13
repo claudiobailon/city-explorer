@@ -11,11 +11,16 @@ app.use(cors());
 const PORT = process.env.PORT || 3001;
 
 app.get('/location', (request, response) => {
-  let city = request.query.city;
-  let geoData = require('./data/location.json');
+  try{
 
-  const obj = new Location(city, geoData);
-  response.send(obj);
+    let city = request.query.city;
+    let geoData = require('./data/location.json');
+    const obj = new Location(city, geoData);
+    response.send(obj);
+  }catch(error){
+    console.log('ERROR',error);
+    response.status(500).send('We messed something up, we are sorry')
+  }
 });
 
 app.get('/weather', (request, response) => {
