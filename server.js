@@ -12,7 +12,7 @@ app.use(cors());
 //==============================Global Variables=======================
 const PORT = process.env.PORT || 3001;
 
-
+//================Retrieving query from Front end and Returning Data==========
 app.get('/location', (request, response) => {
   try{
     let city = request.query.city;
@@ -35,6 +35,7 @@ app.get('/weather', (request, response) => {
   response.send(forcastArray);
 })
 
+//========================Contructor Funtions===================
 function Location(location, geoData){
   this.search_query = location;
   this.formatted_query = geoData[0].display_name;
