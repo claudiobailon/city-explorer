@@ -3,6 +3,7 @@
 //===============================Libraries==========================
 const express = require('express');
 const cors = require('cors');
+const superagent = require('superagent');
 require('dotenv').config();
 
 //==============================Call Libraries========================
@@ -12,7 +13,7 @@ app.use(cors());
 //==============================Global Variables=======================
 const PORT = process.env.PORT || 3001;
 
-//================Retrieving query from Front end and Returning Data==========
+//==============================Routes==========
 app.get('/location', (request, response) => {
   try{
     let city = request.query.city;
@@ -27,10 +28,9 @@ app.get('/location', (request, response) => {
 
 app.get('/weather', (request, response) => {
   let forcast = require('./data/weather.json');
-  let forcastArray = [];
-
-  forcast.data.forEach(day => {
-    forcastArray.push(new Weather(day));
+  //changed for each to map
+  const forcastArray = forcast.data.map(day => {
+    return new Weather(day);
   })
   response.send(forcastArray);
 })
