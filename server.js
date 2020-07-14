@@ -14,17 +14,36 @@ app.use(cors());
 const PORT = process.env.PORT || 3001;
 
 //==============================Routes==========
-app.get('/location', (request, response) => {
-  try{
-    let city = request.query.city;
-    let geoData = require('./data/location.json');
-    const obj = new Location(city, geoData);
-    response.status(200).send(obj);
-  }catch(error){
-    console.log('ERROR',error);
-    response.status(500).send('We messed something up, we are sorry')
+app.get('/location', handleLocation);
+
+function handleLocation(request, response) {
+
+  let city = request.query.city;
+  // let geoData = require('./data/location.json');
+  // full url from site https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
+  let url = `https://us1.locationiq.com/v1/search.php`;
+
+  let queryParamaters = {
+    key: process.env.GEOCODE_API_KEY,
+    q: city,
+    format:`json`,
+    limit:1
   }
-});
+
+  superagent.get(url)
+    .query(queryParamaters)//.query is a built in method
+    .then(dataFromSuperAgent => {
+      let geoData = dataFromSuperAgent.body;//superagent usually grabs from body
+      const obj = new Location(city, geoData);
+      response.status(200).send(obj);
+    }).catch((error) => {
+      console.log('ERROR',error);
+      response.status(500).send('We messed something up, our bad!')
+    });
+}
+
+
+
 
 app.get('/weather', (request, response) => {
   let forcast = require('./data/weather.json');
