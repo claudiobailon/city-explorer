@@ -15,11 +15,9 @@ const PORT = process.env.PORT || 3001;
 
 //==============================Routes==========
 app.get('/location', handleLocation);
-
 function handleLocation(request, response) {
 
   let city = request.query.city;
-  // let geoData = require('./data/location.json');
   // full url from site https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
   let url = `https://us1.locationiq.com/v1/search.php`;
 
@@ -42,17 +40,31 @@ function handleLocation(request, response) {
     });
 }
 
+app.get('/weather', handleWeather);
+function handleWeather(request, response) {
 
+  let url = `https://api.weatherbit.io/v2.0/forecast/daily`;
 
+  let queryParamaters = {
+    key: process.env.WEATHER_API_KEY,
+    city: request.query.search_query,
+    days:8
+  }
 
-app.get('/weather', (request, response) => {
-  let forcast = require('./data/weather.json');
-  //changed for each to map
-  const forcastArray = forcast.data.map(day => {
-    return new Weather(day);
-  })
-  response.send(forcastArray);
-})
+  superagent.get(url)
+    .query(queryParamaters)//.query is a built in method
+    .then(dataFromSuperAgent => {
+      let forcast = dataFromSuperAgent.body.data;
+      const forcastArray = forcast.map(day =>{
+        return new Weather(day);
+      })
+      response.status(200).send(forcastArray);
+    }).catch((error) => {
+      console.log('ERROR',error);
+      response.status(500).send('We messed something up, our bad!')
+    });
+
+}
 
 //========================Contructor Funtions===================
 function Location(location, geoData){
@@ -70,3 +82,4 @@ function Weather(obj){
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 })
+
