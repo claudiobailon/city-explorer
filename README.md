@@ -27,6 +27,28 @@ Start time: 4:25
 Finish time: 4:50
 Actual time needed to complete: 25 minutes
 
+Number and name of feature: 1. Data Formatting
+Estimate of time needed to complete: 15 minutes
+Start time: 2:40
+Finish time: 2:57
+Actual time needed to complete: 17 minutes
 
+Number and name of feature: 2. Locations
+Estimate of time needed to complete:  45 minutes
+Start time: 3:05
+Finish time: 3:57
+Actual time needed to complete: 52 minutes
+
+Number and name of feature: 3. Weather
+Estimate of time needed to complete: 1 hour
+Start time: 4:20
+Finish time: 6:30
+Actual time needed to complete: 2 hrs 10 minutes
+
+Number and name of feature: 4. Trails
+Estimate of time needed to complete: 1 hour
+Start time: 8:15
+Finish time: 9:20
+Actual time needed to complete: 1 hour 5 minutes
 
 
