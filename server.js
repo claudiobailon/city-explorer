@@ -5,11 +5,13 @@ const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
 require('dotenv').config();
+const pg = require('pg');
 
 //==============================Call Libraries========================
 const app = express();
 app.use(cors());
-
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => console.log('ERROR', err));
 //==============================Global Variables=======================
 const PORT = process.env.PORT || 3001;
 
@@ -112,7 +114,9 @@ function Trail(obj){
 }
 
 //====================start server=======================================
-app.listen(PORT, () => {
-  console.log(`listening on ${PORT}`);
-})
+
+client.connect()
+  .then(() => {
+    app.listen(PORT, () => console.log(`listening on ${PORT}`));
+  }).catch(err => console.log('ERROR',err));
 
