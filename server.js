@@ -77,25 +77,17 @@ function handleTrails(request,response){
   superagent.get(url)
     .query(queryParamaters)
     .then(dataFromSuperAgent =>{
-      const trailsArray = dataFromSuperAgent.body.data.map(hike => {
+      const trailsArray = dataFromSuperAgent.body.trails.map(hike => {
         return new Trail(hike);
       })
-    })
+      response.status(200).send(trailsArray);
+      console.log('this is what is coming back', trailsArray);
+    }).catch((error) => {
+      console.log('ERROR',error);
+      response.status(500).send('We messed something up, our bad!')
+    });
 }
 
-// [
-//   {
-//     "name": "Rattlesnake Ledge",
-//     "location": "Riverbend, Washington",
-//     "length": "4.3",
-//     "stars": "4.4",
-//     "star_votes": "84",
-//     "summary": "An extremely popular out-and-back hike to the viewpoint on Rattlesnake Ledge.",
-//     "trail_url": "https://www.hikingproject.com/trail/7021679/rattlesnake-ledge",
-//     "conditions": "Dry: The trail is clearly marked and well maintained.",
-//     "condition_date": "2018-07-21",
-//     "condition_time": "0:00:00 "
-//   },
 //========================Contructor Funtions===================
 function Location(location, geoData){
   this.search_query = location;
@@ -109,6 +101,32 @@ function Weather(obj){
   this.time = new Date(obj.datetime).toDateString();
 }
 
+function Trail(obj){
+  this.name= obj.name;
+  this.location = obj.location;
+  this.length = obj.length;
+  this.stars = obj.stars;
+  this.star_votes = obj.starVotes;
+  this.summary = obj.summary;
+  this.trail_url = obj.url;
+  this.conditions = obj.conditionsDetails;
+  let conditionTime = obj.conditionDate.split(' ');
+  this.condition_date = conditionTime[0];
+  this.condition_time = conditionTime[1];
+}
+// [
+//   {
+//     "name": "Rattlesnake Ledge",
+//     "location": "Riverbend, Washington",
+//     "length": "4.3",
+//     "stars": "4.4",
+//     "star_votes": "84",
+//     "summary": "An extremely popular out-and-back hike to the viewpoint on Rattlesnake Ledge.",
+//     "trail_url": "https://www.hikingproject.com/trail/7021679/rattlesnake-ledge",
+//     "conditions": "Dry: The trail is clearly marked and well maintained.",
+//     "condition_date": "2018-07-21",
+//     "condition_time": "0:00:00 "
+//   },
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 })
