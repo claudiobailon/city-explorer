@@ -13,12 +13,11 @@ app.use(cors());
 //==============================Global Variables=======================
 const PORT = process.env.PORT || 3001;
 
-//==============================Routes==========
+//==============================Routes=================================
 app.get('/location', handleLocation);
 function handleLocation(request, response) {
 
   let city = request.query.city;
-  // full url from site https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
   let url = `https://us1.locationiq.com/v1/search.php`;
 
   let queryParamaters = {
@@ -42,9 +41,7 @@ function handleLocation(request, response) {
 
 app.get('/weather', handleWeather);
 function handleWeather(request, response) {
-
   let url = `https://api.weatherbit.io/v2.0/forecast/daily`;
-
   let queryParamaters = {
     key: process.env.WEATHER_API_KEY,
     city: request.query.search_query,
@@ -66,7 +63,6 @@ function handleWeather(request, response) {
 }
 
 app.get('/trails', handleTrails);
-
 function handleTrails(request,response){
   let url = `https://www.hikingproject.com/data/get-trails`;
   let queryParamaters ={
@@ -114,19 +110,8 @@ function Trail(obj){
   this.condition_date = conditionTime[0];
   this.condition_time = conditionTime[1];
 }
-// [
-//   {
-//     "name": "Rattlesnake Ledge",
-//     "location": "Riverbend, Washington",
-//     "length": "4.3",
-//     "stars": "4.4",
-//     "star_votes": "84",
-//     "summary": "An extremely popular out-and-back hike to the viewpoint on Rattlesnake Ledge.",
-//     "trail_url": "https://www.hikingproject.com/trail/7021679/rattlesnake-ledge",
-//     "conditions": "Dry: The trail is clearly marked and well maintained.",
-//     "condition_date": "2018-07-21",
-//     "condition_time": "0:00:00 "
-//   },
+
+//====================start server=======================================
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 })
