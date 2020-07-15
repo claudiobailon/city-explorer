@@ -13,12 +13,11 @@ app.use(cors());
 //==============================Global Variables=======================
 const PORT = process.env.PORT || 3001;
 
-//==============================Routes==========
+//==============================Routes=================================
 app.get('/location', handleLocation);
 function handleLocation(request, response) {
 
   let city = request.query.city;
-  // full url from site https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
   let url = `https://us1.locationiq.com/v1/search.php`;
 
   let queryParamaters = {
@@ -42,15 +41,12 @@ function handleLocation(request, response) {
 
 app.get('/weather', handleWeather);
 function handleWeather(request, response) {
-
   let url = `https://api.weatherbit.io/v2.0/forecast/daily`;
-
   let queryParamaters = {
     key: process.env.WEATHER_API_KEY,
     city: request.query.search_query,
     days:8
   }
-
   superagent.get(url)
     .query(queryParamaters)//.query is a built in method
     .then(dataFromSuperAgent => {
@@ -66,6 +62,28 @@ function handleWeather(request, response) {
 
 }
 
+app.get('/trails', handleTrails);
+function handleTrails(request,response){
+  let url = `https://www.hikingproject.com/data/get-trails`;
+  let queryParamaters ={
+    lat: request.query.latitude,
+    lon: request.query.longitude,
+    key: process.env.TRAIL_API_KEY,
+  }
+  superagent.get(url)
+    .query(queryParamaters)
+    .then(dataFromSuperAgent =>{
+      const trailsArray = dataFromSuperAgent.body.trails.map(hike => {
+        return new Trail(hike);
+      })
+      response.status(200).send(trailsArray);
+      console.log('this is what is coming back', trailsArray);
+    }).catch((error) => {
+      console.log('ERROR',error);
+      response.status(500).send('We messed something up, our bad!')
+    });
+}
+
 //========================Contructor Funtions===================
 function Location(location, geoData){
   this.search_query = location;
@@ -79,6 +97,21 @@ function Weather(obj){
   this.time = new Date(obj.datetime).toDateString();
 }
 
+function Trail(obj){
+  this.name= obj.name;
+  this.location = obj.location;
+  this.length = obj.length;
+  this.stars = obj.stars;
+  this.star_votes = obj.starVotes;
+  this.summary = obj.summary;
+  this.trail_url = obj.url;
+  this.conditions = obj.conditionsDetails;
+  let conditionTime = obj.conditionDate.split(' ');
+  this.condition_date = conditionTime[0];
+  this.condition_time = conditionTime[1];
+}
+
+//====================start server=======================================
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 })
