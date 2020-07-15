@@ -18,7 +18,6 @@ app.get('/location', handleLocation);
 function handleLocation(request, response) {
 
   let city = request.query.city;
-  // let geoData = require('./data/location.json');
   // full url from site https://us1.locationiq.com/v1/search.php?key=YOUR_PRIVATE_TOKEN&q=SEARCH_STRING&format=json
   let url = `https://us1.locationiq.com/v1/search.php`;
 
@@ -44,21 +43,19 @@ function handleLocation(request, response) {
 app.get('/weather', handleWeather);
 function handleWeather(request, response) {
 
-  let url = `https://api.weatherbit.io/v2.0/current`;
+  let url = `https://api.weatherbit.io/v2.0/forecast/daily`;
 
   let queryParamaters = {
     key: process.env.WEATHER_API_KEY,
-    units: `I`,
-    city: request.query.city,
-    // format:`json`,
-    limit:8
+    city: request.query.search_query,
+    days:8
   }
 
   superagent.get(url)
     .query(queryParamaters)//.query is a built in method
     .then(dataFromSuperAgent => {
-      let forcast = dataFromSuperAgent.body;
-      const forcastArray = forcast.data.map(day =>{
+      let forcast = dataFromSuperAgent.body.data;
+      const forcastArray = forcast.map(day =>{
         return new Weather(day);
       })
       response.status(200).send(forcastArray);
@@ -67,13 +64,6 @@ function handleWeather(request, response) {
       response.status(500).send('We messed something up, our bad!')
     });
 
-
-  // let forcast = require('./data/weather.json');
-  //changed forEach to map
-//   const forcastArray = forcast.data.map(day => {
-//     return new Weather(day);
-//   })
-//   response.send(forcastArray);
 }
 
 //========================Contructor Funtions===================
