@@ -51,4 +51,21 @@ Start time: 8:15
 Finish time: 9:20
 Actual time needed to complete: 1 hour 5 minutes
 
+Number and name of feature: 1. Database
+Estimate of time needed to complete: 1 hour
+Start time: 1:55
+Finish time: 
+Actual time needed to complete: 
+
+Number and name of feature: 2. Server
+Estimate of time needed to complete:  45 minute
+Start time: 
+Finish time: 
+Actual time needed to complete: 
+
+Number and name of feature: 3. Deploy
+Estimate of time needed to complete: 15 minutes
+Start time: 
+Finish time: 
+Actual time needed to complete: 
 
