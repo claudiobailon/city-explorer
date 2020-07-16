@@ -28,6 +28,14 @@ function handleLocation(request, response) {
     format:`json`,
     limit:1
   }
+  //TODO: Somewhere here, check to see if city is in database. If it is, return that object, if not, send superagent to grab it from the api.
+  let sql = 'SELECT TOP 1 search_query FROM locationtable WHERE search_query = city;';
+
+  client.query(sql)
+    .then(resultsFromDatabase =>{
+      let check = resultsFromDatabase.rows;
+      
+    })
 
   superagent.get(url)
     .query(queryParamaters)//.query is a built in method
