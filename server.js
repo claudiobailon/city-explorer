@@ -17,20 +17,25 @@ const PORT = process.env.PORT || 3001;
 
 //==============================Routes=================================
 app.get('/location', handleLocation);
+app.get('/weather', handleWeather);
+app.get('/trails', handleTrails);
+
+//==============================Callback Functions===================
 function handleLocation(request, response){
 
   //TODO: Somewhere here, check to see if city is in database. If it is, return that object, if not, send superagent to grab it from the api.
 
   let city = request.query.city;
-  let sql = 'SELECT TOP 1 search_query FROM locationtable WHERE search_query = city;';//https://stackoverflow.com/questions/18114458/fastest-way-to-determine-if-record-exists
+  let sql = 'SELECT * FROM locationtable WHERE search_query=$1;';//https://stackoverflow.com/questions/18114458/fastest-way-to-determine-if-record-exists
+  let safeValues = [city];
 
-  client.query(sql)
+  client.query(sql, safeValues)
     .then(resultsFromDatabase =>{
-      let check = resultsFromDatabase.rows;
       //Checks to see if search query is in database
-      if(check.toLowercase() === city.toLowercase()){
-        response.satus(200).send(check);
-        console.log('this was in table',check);
+      if(resultsFromDatabase.rowCount){
+        let check = resultsFromDatabase.rows[0];
+        response.status(200).send(check);
+      //If it's not in the database, it sends superagent to grab data from api
       }else{
         let url = `https://us1.locationiq.com/v1/search.php`;
         let queryParamaters = {
@@ -44,9 +49,9 @@ function handleLocation(request, response){
           .then(dataFromSuperAgent => {
             let geoData = dataFromSuperAgent.body;//superagent usually grabs from body
             const obj = new Location(city, geoData);
-            response.status(200).send(obj);
 
-            let sql = 'INSERT INTO locationdb (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+            // adds object from API to database
+            let sql = 'INSERT INTO locationtable (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
 
             let searchValue = obj.search_query;
             let formattedValue = obj.formatted_query;
@@ -55,12 +60,9 @@ function handleLocation(request, response){
 
             let safeValues = [searchValue, formattedValue, latValue, lonValue];
 
-            // adds object from API to database
-            client.query(sql, safeValues)
-              .then( resultsFromSuperagent => {
-                let id = resultsFromSuperagent.rows;
-                console.log('id', id);
-              });
+            client.query(sql, safeValues);
+
+            response.status(200).send(obj);
           }).catch((error) => {
             console.log('ERROR',error);
             response.status(500).send('We messed something up, our bad!');
@@ -72,7 +74,6 @@ function handleLocation(request, response){
     })
 }
 
-app.get('/weather', handleWeather);
 function handleWeather(request, response) {
   let url = `https://api.weatherbit.io/v2.0/forecast/daily`;
   let queryParamaters = {
@@ -95,7 +96,6 @@ function handleWeather(request, response) {
 
 }
 
-app.get('/trails', handleTrails);
 function handleTrails(request,response){
   let url = `https://www.hikingproject.com/data/get-trails`;
   let queryParamaters ={
@@ -110,7 +110,6 @@ function handleTrails(request,response){
         return new Trail(hike);
       })
       response.status(200).send(trailsArray);
-      console.log('this is what is coming back', trailsArray);
     }).catch((error) => {
       console.log('ERROR',error);
       response.status(500).send('We messed something up, our bad!')
