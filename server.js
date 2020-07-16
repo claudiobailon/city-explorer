@@ -118,10 +118,10 @@ function handleTrails(request,response){
 }
 //===============Movies Callback===========
 function handleMovies(request,response){
-  let url = 'https://api.themoviedb.org/3/movie/550';
+  let url = 'https://api.themoviedb.org/3/search/movie';
   let queryParamaters = {
     api_key: process.env.MOVIE_API_KEY,
-    query: request.query.search_query
+    query: request.query.search_query,
   }
   superagent.get(url)
     .query(queryParamaters)
@@ -164,12 +164,11 @@ function Trail(obj){
 }
 
 function Movie(obj){
-
   this.title = obj.title;
   this.overview = obj.overview;
   this.average_votes = obj.vote_average;
   this.total_votes = obj.vote_count;
-  this.image_url = obj.poster_path;
+  this.image_url = `https://image.tmdb.org/t/p/w500/${obj.poster_path}`;
   this.popularity = obj.popularity;
   this.released_on = obj.release_date;
 }
