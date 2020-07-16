@@ -19,11 +19,12 @@ const PORT = process.env.PORT || 3001;
 app.get('/location', handleLocation);
 app.get('/weather', handleWeather);
 app.get('/trails', handleTrails);
+app.get('/movies', handleMovies);
 
 //==============================Callback Functions===================
-function handleLocation(request, response){
 
-  //TODO: Somewhere here, check to see if city is in database. If it is, return that object, if not, send superagent to grab it from the api.
+//===============Location Callback===========
+function handleLocation(request, response){
 
   let city = request.query.city;
   let sql = 'SELECT * FROM locationtable WHERE search_query=$1;';//https://stackoverflow.com/questions/18114458/fastest-way-to-determine-if-record-exists
@@ -73,7 +74,7 @@ function handleLocation(request, response){
       response.status(500).send('We messed something up, our bad!');
     })
 }
-
+//===============Weather Callback===========
 function handleWeather(request, response) {
   let url = `https://api.weatherbit.io/v2.0/forecast/daily`;
   let queryParamaters = {
@@ -95,7 +96,7 @@ function handleWeather(request, response) {
     });
 
 }
-
+//===============Trails Callback===========
 function handleTrails(request,response){
   let url = `https://www.hikingproject.com/data/get-trails`;
   let queryParamaters ={
@@ -110,6 +111,25 @@ function handleTrails(request,response){
         return new Trail(hike);
       })
       response.status(200).send(trailsArray);
+    }).catch((error) => {
+      console.log('ERROR',error);
+      response.status(500).send('We messed something up, our bad!')
+    });
+}
+//===============Movies Callback===========
+function handleMovies(request,response){
+  let url = 'https://api.themoviedb.org/3/movie/550';
+  let queryParamaters = {
+    api_key: process.env.MOVIE_API_KEY,
+    query: request.query.search_query
+  }
+  superagent.get(url)
+    .query(queryParamaters)
+    .then(dataFromSuperAgent => {
+      const moviesArray = dataFromSuperAgent.body.results.map(movie => {
+        return new Movie(movie);
+      })
+      response.status(200).send(moviesArray);
     }).catch((error) => {
       console.log('ERROR',error);
       response.status(500).send('We messed something up, our bad!')
@@ -142,6 +162,18 @@ function Trail(obj){
   this.condition_date = conditionTime[0];
   this.condition_time = conditionTime[1];
 }
+
+function Movie(obj){
+
+  this.title = obj.title;
+  this.overview = obj.overview;
+  this.average_votes = obj.vote_average;
+  this.total_votes = obj.vote_count;
+  this.image_url = obj.poster_path;
+  this.popularity = obj.popularity;
+  this.released_on = obj.release_date;
+}
+
 
 //====================start server=======================================
 
