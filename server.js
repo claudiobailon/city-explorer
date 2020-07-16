@@ -17,36 +17,59 @@ const PORT = process.env.PORT || 3001;
 
 //==============================Routes=================================
 app.get('/location', handleLocation);
-function handleLocation(request, response) {
+function handleLocation(request, response){
+
+  //TODO: Somewhere here, check to see if city is in database. If it is, return that object, if not, send superagent to grab it from the api.
 
   let city = request.query.city;
-  let url = `https://us1.locationiq.com/v1/search.php`;
-
-  let queryParamaters = {
-    key: process.env.GEOCODE_API_KEY,
-    q: city,
-    format:`json`,
-    limit:1
-  }
-  //TODO: Somewhere here, check to see if city is in database. If it is, return that object, if not, send superagent to grab it from the api.
-  let sql = 'SELECT TOP 1 search_query FROM locationtable WHERE search_query = city;';
+  let sql = 'SELECT TOP 1 search_query FROM locationtable WHERE search_query = city;';//https://stackoverflow.com/questions/18114458/fastest-way-to-determine-if-record-exists
 
   client.query(sql)
     .then(resultsFromDatabase =>{
       let check = resultsFromDatabase.rows;
-      
-    })
+      //Checks to see if search query is in database
+      if(check.toLowercase() === city.toLowercase()){
+        response.satus(200).send(check);
+        console.log('this was in table',check);
+      }else{
+        let url = `https://us1.locationiq.com/v1/search.php`;
+        let queryParamaters = {
+          key: process.env.GEOCODE_API_KEY,
+          q: city,
+          format:`json`,
+          limit:1
+        };
+        superagent.get(url)
+          .query(queryParamaters)//.query is a built in method
+          .then(dataFromSuperAgent => {
+            let geoData = dataFromSuperAgent.body;//superagent usually grabs from body
+            const obj = new Location(city, geoData);
+            response.status(200).send(obj);
 
-  superagent.get(url)
-    .query(queryParamaters)//.query is a built in method
-    .then(dataFromSuperAgent => {
-      let geoData = dataFromSuperAgent.body;//superagent usually grabs from body
-      const obj = new Location(city, geoData);
-      response.status(200).send(obj);
+            let sql = 'INSERT INTO locationdb (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+
+            let searchValue = obj.search_query;
+            let formattedValue = obj.formatted_query;
+            let latValue = obj.latitude;
+            let lonValue = obj.longitude;
+
+            let safeValues = [searchValue, formattedValue, latValue, lonValue];
+
+            // adds object from API to database
+            client.query(sql, safeValues)
+              .then( resultsFromSuperagent => {
+                let id = resultsFromSuperagent.rows;
+                console.log('id', id);
+              });
+          }).catch((error) => {
+            console.log('ERROR',error);
+            response.status(500).send('We messed something up, our bad!');
+          })
+      }
     }).catch((error) => {
       console.log('ERROR',error);
-      response.status(500).send('We messed something up, our bad!')
-    });
+      response.status(500).send('We messed something up, our bad!');
+    })
 }
 
 app.get('/weather', handleWeather);
