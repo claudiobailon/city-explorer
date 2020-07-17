@@ -20,6 +20,7 @@ app.get('/location', handleLocation);
 app.get('/weather', handleWeather);
 app.get('/trails', handleTrails);
 app.get('/movies', handleMovies);
+app.get('/yelp', handleYelp);
 
 //==============================Callback Functions===================
 
@@ -135,8 +136,31 @@ function handleMovies(request,response){
       response.status(500).send('We messed something up, our bad!')
     });
 }
+//===============Yelp Callback===========
+function handleYelp(request,response){
+  // const numberPerPage = 2; //need for pagination
 
-//========================Contructor Funtions===================
+  let url = 'https://api.yelp.com/v3/businesses/search';
+  let queryParamaters = {
+    location: request.query.search_query,
+    // offset: start, //save these 2 lines for pagination
+    // limit: numberPerPage,
+  }
+
+  superagent.get(url)
+    .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+    .query(queryParamaters)
+    .then(dataFromSuperAgent => {
+      const restaurantArray = dataFromSuperAgent.body.businesses.map(restaurant => {
+        return new Restaurant(restaurant);
+      })
+      response.status(200).send(restaurantArray);
+    }).catch((error) => {
+      console.log('ERROR',error);
+      response.status(500).send('We messed something up, our bad!')
+    });
+}
+//=============================Contructor Funtions===========================
 function Location(location, geoData){
   this.search_query = location;
   this.formatted_query = geoData[0].display_name;
@@ -172,10 +196,15 @@ function Movie(obj){
   this.popularity = obj.popularity;
   this.released_on = obj.release_date;
 }
-
+function Restaurant(obj){
+  this.name = obj.name;
+  this.image_url = obj.image_url;
+  this.price = obj.price;
+  this.rating = obj.rating;
+  this.url = obj.url;
+}
 
 //====================start server=======================================
-
 client.connect()
   .then(() => {
     app.listen(PORT, () => console.log(`listening on ${PORT}`));
