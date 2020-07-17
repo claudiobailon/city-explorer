@@ -138,13 +138,15 @@ function handleMovies(request,response){
 }
 //===============Yelp Callback===========
 function handleYelp(request,response){
-  // const numberPerPage = 2; //need for pagination
+  const numberPerPage = 5;
+  const page = request.query.page;
+  const start = ((page - 1) * numberPerPage + 1);
 
   let url = 'https://api.yelp.com/v3/businesses/search';
   let queryParamaters = {
     location: request.query.search_query,
-    // offset: start, //save these 2 lines for pagination
-    // limit: numberPerPage,
+    offset: start,
+    limit: numberPerPage,
   }
 
   superagent.get(url)

@@ -73,7 +73,6 @@ Finish time: 1;30
 Actual time needed to complete: 10 minutes
 
 ## Lab 09
-
 Number and name of feature: 1. Movies
 Estimate of time needed to complete: 45 minutes
 Start time: 2:55
@@ -83,14 +82,14 @@ Actual time needed to complete: 1 hour 5 minutes
 Number and name of feature: 2. Yelp
 Estimate of time needed to complete:  1 hour 30 minutes
 Start time: 4:15
-Finish time: 
-Actual time needed to complete: 
+Finish time: 5:40
+Actual time needed to complete: 1 hour 25 minutes
 
 Number and name of feature: 3. Pagination
 Estimate of time needed to complete: 45 minutes
-Start time: 
-Finish time: 
-Actual time needed to complete: 
+Start time: 6:00
+Finish time: 6:15
+Actual time needed to complete: 15 minutes
 
 
 
