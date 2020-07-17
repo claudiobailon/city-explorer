@@ -3,6 +3,7 @@ This lab is helping us further understand the WRRC and what to send to the front
 
 Resources:
 
+## Lab 06
 Number and name of feature: 1. Repository set-up
 Estimate of time needed to complete: 15 minutes
 Start time: 2:00
@@ -27,6 +28,7 @@ Start time: 4:25
 Finish time: 4:50
 Actual time needed to complete: 25 minutes
 
+## Lab 07
 Number and name of feature: 1. Data Formatting
 Estimate of time needed to complete: 15 minutes
 Start time: 2:40
@@ -51,6 +53,7 @@ Start time: 8:15
 Finish time: 9:20
 Actual time needed to complete: 1 hour 5 minutes
 
+## Lab 08
 Number and name of feature: 1. Database
 Estimate of time needed to complete: 1 hour
 Start time: 1:55
@@ -59,13 +62,35 @@ Actual time needed to complete: 1 hour 35 minutes
 
 Number and name of feature: 2. Server
 Estimate of time needed to complete:  1 hour 30 minutes
-Start time: 3:45
-Finish time: 
-Actual time needed to complete: 
+Start time: 3:45 pm
+Finish time: 10:30 am
+Actual time needed to complete: 7 hours
 
 Number and name of feature: 3. Deploy
 Estimate of time needed to complete: 15 minutes
-Start time: 
-Finish time: 
-Actual time needed to complete: 
+Start time: 1:20
+Finish time: 1;30
+Actual time needed to complete: 10 minutes
+
+## Lab 09
+Number and name of feature: 1. Movies
+Estimate of time needed to complete: 45 minutes
+Start time: 2:55
+Finish time: 4:00
+Actual time needed to complete: 1 hour 5 minutes
+
+Number and name of feature: 2. Yelp
+Estimate of time needed to complete:  1 hour 30 minutes
+Start time: 4:15
+Finish time: 5:40
+Actual time needed to complete: 1 hour 25 minutes
+
+Number and name of feature: 3. Pagination
+Estimate of time needed to complete: 45 minutes
+Start time: 6:00
+Finish time: 6:15
+Actual time needed to complete: 15 minutes
+
+
+
 
